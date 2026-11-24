@@ -1,11 +1,17 @@
-name = "kitchen-workspace"
-pages_build_output_dir = "./outputs"
+name = "xxskitchen"
+main = "worker.js"
+compatibility_date = "2026-11-24"
+
+[assets]
+directory = "./outputs"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
 
 [[d1_databases]]
 binding = "DB"
-database_name = "kitchen-workspace"
+database_name = "REPLACE_WITH_D1_DATABASE_NAME"
 database_id = "REPLACE_WITH_D1_DATABASE_ID"
 
 [[r2_buckets]]
 binding = "PHOTOS"
-bucket_name = "kitchen-workspace-photos"
+bucket_name = "REPLACE_WITH_R2_BUCKET_NAME"

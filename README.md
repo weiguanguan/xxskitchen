@@ -6,11 +6,11 @@
 
 - GitHub：代码仓库和版本管理
 - Cloudflare Pages：前端静态页面托管
-- Cloudflare Pages Functions：菜品和照片 API
+- Cloudflare Worker：菜品和照片 API，同时托管静态资产
 - Cloudflare D1：菜品记录
 - Cloudflare R2：成品照片
 
-当前项目原本是纯静态 HTML/CSS/JS，没有 Next.js、TypeScript 或服务端运行需求。当前范围优先采用 Cloudflare 原生静态部署，不强行迁移到 Next.js。需要云端数据时，通过 Pages Functions 访问 D1/R2，而不是让浏览器直接访问数据库或对象存储。
+当前项目原本是纯静态 HTML/CSS/JS，没有 Next.js、TypeScript 或服务端运行需求。当前范围保留静态页面，但部署形态改为带 Worker 入口的 Cloudflare 静态资产 Worker：Worker 负责 `/api`，`ASSETS` 负责页面资源。这样可以在同一个项目中绑定 D1/R2。
 
 ## 代码结构
 
@@ -21,6 +21,7 @@
 - `outputs/js/dish-repository.js`：Demo / Cloudflare D1 菜品保存接口
 - `outputs/js/photo-uploader.js`：照片预览 / Cloudflare R2 上传接口
 - `outputs/js/demo-data.js`：本地 Demo 数据
+- `worker.js`：Cloudflare Worker 入口，路由 `/api` 和静态资源
 - `functions/api/dishes.js`：D1 菜品 API
 - `functions/api/photos.js`：R2 照片上传与读取 API
 - `schema.sql`：D1 数据表结构
@@ -50,13 +51,13 @@
 ## Cloudflare 初始化
 
 1. 创建 D1 数据库和 R2 bucket。
-2. 将 `wrangler.example.toml` 复制为自己的 Wrangler 配置，并填入真实 D1 database ID。
-3. 在 Cloudflare D1 控制台执行 `migrations/0001_create_dishes.sql`。
-4. 在 Cloudflare Pages 项目的 Settings → Functions → Bindings 中添加：
+2. 在 Cloudflare D1 控制台执行 `migrations/0001_create_dishes.sql`。
+3. 将本项目的 `wrangler.toml` 保持在仓库根目录，确保部署入口为 `worker.js`。
+4. 部署一次带 Worker 入口的版本后，在 Cloudflare 项目的 Settings → Bindings 中添加：
    - D1 Database：变量名 `DB`
    - R2 Bucket：变量名 `PHOTOS`
 5. 当前 `outputs/runtime-config.js` 已默认开启 `apiEnabled: true`。
-6. 重新部署 Pages，让 `functions/api` 与 `outputs` 一起发布。
+6. 重新部署，让 `worker.js`、`functions/api` 与 `outputs` 一起发布。
 
 如果使用 Wrangler，也可以执行等价的 D1 迁移命令：
 
@@ -66,14 +67,14 @@ wrangler d1 execute kitchen-workspace --remote --file=./migrations/0001_create_d
 
 D1/R2 绑定由 Cloudflare 服务端提供，前端不需要也不应该持有数据库密钥、R2 密钥或任何 Service Token。当前 API 没有用户认证，部署前应确认站点访问范围；否则任何能访问页面的人都可能调用写入接口。
 
-## GitHub 与 Cloudflare Pages
+## GitHub 与 Cloudflare 部署
 
 1. 将项目提交到 GitHub。
 2. 在 Cloudflare Pages 选择 **Connect to Git**。
 3. 连接 GitHub 仓库。
-4. 如果使用 `wrangler.example.toml` 对应的 Pages 配置，输出目录为 `outputs`。
-5. 静态文件无需 Next.js 构建命令；如果未来引入构建工具，再补充 build command。
-6. 配置 D1/R2 绑定后，每次 push 会自动部署。
+4. 部署命令使用 `npx wrangler deploy`，根目录为 `/`。
+5. `wrangler.toml` 会将 `outputs` 作为静态资源，并将 `worker.js` 作为 Worker 入口。
+6. 首次部署后在绑定设置中选择 D1 变量名 `DB` 和 R2 变量名 `PHOTOS`，之后每次 push 会自动部署。
 
 ## 手机浏览器测试
 
