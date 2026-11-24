@@ -54,7 +54,7 @@
 2. 在 Cloudflare D1 控制台执行 `migrations/0001_create_dishes.sql`。
 3. 将本项目的 `wrangler.toml` 保持在仓库根目录，确保部署入口为 `worker.js`。
 4. 部署一次带 Worker 入口的版本后，在 Cloudflare 项目的 Settings → Bindings 中添加：
-   - D1 Database：变量名 `DB`
+   - D1 Database：变量名 `kitchendb`（需与 Cloudflare 控制台中的绑定名称一致）
    - R2 Bucket：变量名 `PHOTOS`
 5. 当前 `outputs/runtime-config.js` 已默认开启 `apiEnabled: true`。
 6. 重新部署，让 `worker.js`、`functions/api` 与 `outputs` 一起发布。
@@ -74,7 +74,7 @@ D1/R2 绑定由 Cloudflare 服务端提供，前端不需要也不应该持有�
 3. 连接 GitHub 仓库。
 4. 部署命令使用 `npx wrangler deploy`，根目录为 `/`。
 5. `wrangler.toml` 会将 `outputs` 作为静态资源，并将 `worker.js` 作为 Worker 入口。
-6. 首次部署后在绑定设置中选择 D1 变量名 `DB` 和 R2 变量名 `PHOTOS`，之后每次 push 会自动部署。
+6. 首次部署后在绑定设置中选择 D1 变量名 `kitchendb` 和 R2 变量名 `PHOTOS`，之后每次 push 会自动部署。
 
 ## 手机浏览器测试
 

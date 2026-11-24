@@ -6,8 +6,8 @@ function json(data, status = 200) {
 }
 
 export async function onRequestGet({ env }) {
-  if (!env.DB) return json({ error: 'D1 binding DB is not configured' }, 503);
-  const result = await env.DB.prepare(
+  if (!env.kitchendb) return json({ error: 'D1 binding kitchendb is not configured' }, 503);
+  const result = await env.kitchendb.prepare(
     'SELECT id, name, tags_json, ingredients_json, notes, photo_url, created_at FROM dishes ORDER BY created_at DESC',
   ).all();
   return json(result.results.map((row) => ({
@@ -22,12 +22,12 @@ export async function onRequestGet({ env }) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!env.DB) return json({ error: 'D1 binding DB is not configured' }, 503);
+  if (!env.kitchendb) return json({ error: 'D1 binding kitchendb is not configured' }, 503);
   const input = await request.json();
   if (!input.name || !input.photoUrl) return json({ error: 'name and photoUrl are required' }, 400);
 
   const id = crypto.randomUUID();
-  await env.DB.prepare(
+  await env.kitchendb.prepare(
     `INSERT INTO dishes (id, name, tags_json, ingredients_json, notes, photo_url, created_at)
      VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`,
   ).bind(
