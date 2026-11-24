@@ -1,4 +1,4 @@
-import { createDishRepository } from './js/dish-repository.js';
+import { DemoDishRepository, createDishRepository } from './js/dish-repository.js';
 
 const repository = createDishRepository();
 const chips = document.querySelectorAll('.filter-chip');
@@ -17,7 +17,17 @@ function renderDishes(records) {
   empty.hidden = records.length !== 0;
 }
 
-const allDishes = await repository.listDishes();
+let allDishes;
+try {
+  allDishes = await repository.listDishes();
+} catch (error) {
+  // API 尚未完成绑定时仍保留可浏览的 Demo，不把失败伪装成云端数据。
+  allDishes = await new DemoDishRepository().listDishes();
+  const note = document.createElement('p');
+  note.className = 'data-notice';
+  note.textContent = '当前显示 Demo 菜品，Cloudflare D1 尚未连接。';
+  document.querySelector('.filter-section').append(note);
+}
 renderDishes(allDishes);
 
 chips.forEach((chip) => chip.addEventListener('click', () => {

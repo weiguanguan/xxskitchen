@@ -51,12 +51,20 @@
 
 1. 创建 D1 数据库和 R2 bucket。
 2. 将 `wrangler.example.toml` 复制为自己的 Wrangler 配置，并填入真实 D1 database ID。
-3. 执行 `schema.sql` 初始化 D1 表。
-4. 在 Cloudflare Pages 项目中配置 `DB` 和 `PHOTOS` 绑定。
-5. 将 `outputs/config.example.js` 的运行配置注入到页面，启用 `apiEnabled`。
-6. 部署 Pages Functions 与 `outputs` 静态文件。
+3. 在 Cloudflare D1 控制台执行 `migrations/0001_create_dishes.sql`。
+4. 在 Cloudflare Pages 项目的 Settings → Functions → Bindings 中添加：
+   - D1 Database：变量名 `DB`
+   - R2 Bucket：变量名 `PHOTOS`
+5. 当前 `outputs/runtime-config.js` 已默认开启 `apiEnabled: true`。
+6. 重新部署 Pages，让 `functions/api` 与 `outputs` 一起发布。
 
-D1/R2 绑定由 Cloudflare 服务端提供，前端不需要也不应该持有数据库密钥、R2 密钥或任何 Service Token。
+如果使用 Wrangler，也可以执行等价的 D1 迁移命令：
+
+```bash
+wrangler d1 execute kitchen-workspace --remote --file=./migrations/0001_create_dishes.sql
+```
+
+D1/R2 绑定由 Cloudflare 服务端提供，前端不需要也不应该持有数据库密钥、R2 密钥或任何 Service Token。当前 API 没有用户认证，部署前应确认站点访问范围；否则任何能访问页面的人都可能调用写入接口。
 
 ## GitHub 与 Cloudflare Pages
 
