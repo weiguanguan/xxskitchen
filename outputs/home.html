@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#fff5e6" />
+    <title>我的菜品 · Kitchen Workspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="home.css" />
+  </head>
+  <body>
+    <main class="home-shell">
+      <header class="home-header">
+        <div>
+          <p class="eyebrow">KITCHEN WORKSPACE</p>
+          <h1>我的菜品</h1>
+        </div>
+        <span class="record-count" id="record-count">06 道记录</span>
+      </header>
+
+      <section class="filter-section" aria-label="按标签筛选菜品">
+        <div class="filter-head"><span>筛选</span><span class="filter-note">按标签查看</span></div>
+        <div class="filter-list" id="filter-list">
+          <button class="filter-chip active" type="button" data-filter="全部">全部</button>
+          <button class="filter-chip" type="button" data-filter="家常菜">家常菜</button>
+          <button class="filter-chip" type="button" data-filter="下饭菜">下饭菜</button>
+          <button class="filter-chip" type="button" data-filter="快手菜">快手菜</button>
+          <button class="filter-chip" type="button" data-filter="一人食">一人食</button>
+          <button class="filter-chip" type="button" data-filter="周末慢炖">周末慢炖</button>
+        </div>
+      </section>
+
+      <section class="dish-grid" id="dish-grid" aria-label="菜品记录"></section>
+
+      <p class="empty-state" id="empty-state" hidden>还没有符合条件的菜品</p>
+      <a class="add-dish-button" href="index.html" aria-label="添加菜品"><span>＋</span><em>添加菜品</em></a>
+    </main>
+    <script type="module" src="home.js"></script>
+  </body>
+</html>

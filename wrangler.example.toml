@@ -1,0 +1,11 @@
+name = "kitchen-workspace"
+pages_build_output_dir = "./outputs"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "kitchen-workspace"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "kitchen-workspace-photos"
