@@ -21,6 +21,11 @@ export default {
       return methodNotAllowed();
     }
 
+    if (url.pathname === '/' && (request.method === 'GET' || request.method === 'HEAD')) {
+      url.pathname = '/home.html';
+      return env.ASSETS.fetch(new Request(url, request));
+    }
+
     return env.ASSETS.fetch(request);
   },
 };
