@@ -1,5 +1,5 @@
 import { createDishRepository } from './js/dish-repository.js';
-import { readPhotoPreview, uploadPhoto } from './js/photo-uploader.js';
+import { createCroppedPhoto, readPhotoPreview, uploadPhoto } from './js/photo-uploader.js';
 
 const $ = (selector) => document.querySelector(selector);
 const repository = createDishRepository();
@@ -8,6 +8,8 @@ const preview = $('#photo-preview');
 const photoError = $('#photo-error');
 let selectedFile = null;
 let selectedPhotoPreviewUrl = '';
+let cropState = { scale: 1, x: 0, y: 0 };
+let dragState = null;
 let selectedTags = new Set();
 let ingredients = new Set();
 
@@ -16,14 +18,45 @@ async function loadPhoto(file) {
   try {
     selectedPhotoPreviewUrl = await readPhotoPreview(file);
     selectedFile = file;
+    cropState = { scale: 1, x: 0, y: 0 };
     preview.src = selectedPhotoPreviewUrl;
     photoCard.classList.add('has-photo');
+    $('#photo-adjust-controls').hidden = false;
+    renderPhotoTransform();
     photoCard.classList.remove('has-error');
     photoError.textContent = '';
   } catch (error) {
     photoError.textContent = error.message;
   }
 }
+
+function renderPhotoTransform() {
+  photoCard.style.setProperty('--photo-x', `${cropState.x}px`);
+  photoCard.style.setProperty('--photo-y', `${cropState.y}px`);
+  photoCard.style.setProperty('--photo-scale', cropState.scale);
+}
+
+function setPhotoScale(nextScale) {
+  cropState.scale = Math.min(3, Math.max(1, Number(nextScale.toFixed(2))));
+  renderPhotoTransform();
+}
+
+$('#zoom-in').addEventListener('click', () => setPhotoScale(cropState.scale + 0.1));
+$('#zoom-out').addEventListener('click', () => setPhotoScale(cropState.scale - 0.1));
+$('#reset-photo').addEventListener('click', () => { cropState = { scale: 1, x: 0, y: 0 }; renderPhotoTransform(); });
+photoCard.addEventListener('pointerdown', (event) => {
+  if (!selectedFile) return;
+  photoCard.setPointerCapture(event.pointerId);
+  dragState = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, originX: cropState.x, originY: cropState.y };
+});
+photoCard.addEventListener('pointermove', (event) => {
+  if (!dragState || dragState.pointerId !== event.pointerId) return;
+  cropState.x = dragState.originX + event.clientX - dragState.startX;
+  cropState.y = dragState.originY + event.clientY - dragState.startY;
+  renderPhotoTransform();
+});
+photoCard.addEventListener('pointerup', () => { dragState = null; });
+photoCard.addEventListener('pointercancel', () => { dragState = null; });
 
 $('#camera-button').addEventListener('click', () => $('#camera-input').click());
 $('#album-button').addEventListener('click', () => $('#album-input').click());
@@ -34,6 +67,9 @@ $('#remove-photo').addEventListener('click', () => {
   selectedPhotoPreviewUrl = '';
   preview.src = '';
   photoCard.classList.remove('has-photo');
+  $('#photo-adjust-controls').hidden = true;
+  cropState = { scale: 1, x: 0, y: 0 };
+  renderPhotoTransform();
   $('#camera-input').value = '';
   $('#album-input').value = '';
 });
@@ -103,7 +139,8 @@ $('#dish-form').addEventListener('submit', async (event) => {
   else { $('#name-error').textContent = ''; $('#dish-name').classList.remove('has-error'); }
   if (!valid) { $('.feedback').className = 'feedback'; return; }
   try {
-    const photo = await uploadPhoto(selectedFile, selectedPhotoPreviewUrl);
+    const croppedFile = await createCroppedPhoto(selectedFile, cropState, photoCard.clientWidth);
+    const photo = await uploadPhoto(croppedFile, selectedPhotoPreviewUrl);
     const result = await repository.createDish({ name, tags: [...selectedTags], ingredients: [...ingredients], notes: $('#notes').value.trim(), photoUrl: photo.url });
     $('.feedback').className = 'feedback success';
     $('#feedback').textContent = result.persistence === 'demo'

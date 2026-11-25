@@ -40,6 +40,11 @@
             <img id="photo-preview" alt="菜品照片预览" />
             <button class="remove-photo" type="button" id="remove-photo" aria-label="移除照片">×</button>
           </div>
+          <div class="photo-adjust-controls" id="photo-adjust-controls" hidden>
+            <button type="button" id="zoom-out" aria-label="缩小照片">−</button>
+            <button type="button" id="reset-photo" aria-label="重置照片位置和缩放">重置</button>
+            <button type="button" id="zoom-in" aria-label="放大照片">＋</button>
+          </div>
           <input id="camera-input" type="file" accept="image/*" capture="environment" hidden />
           <input id="album-input" type="file" accept="image/*" hidden />
           <p class="field-error" id="photo-error" role="alert"></p>
