@@ -1,5 +1,5 @@
 export const demoDishes = [
-  { id: 'demo-tomato', name: '番茄牛腩', tags: ['家常菜', '下饭菜'], photoUrl: 'assets/dish-tomato.svg' },
+  { id: 'demo-tomato', name: '番茄牛腩', tags: ['家常菜', '下饭菜'], ingredients: ['牛腩', '番茄', '洋葱'], notes: '示例备注：酸甜开胃。', photoUrl: 'assets/dish-tomato.svg' },
   { id: 'demo-noodle', name: '葱油拌面', tags: ['快手菜', '一人食'], photoUrl: 'assets/dish-noodle.svg' },
   { id: 'demo-curry', name: '椰香咖喱鸡', tags: ['家常菜', '周末慢炖'], photoUrl: 'assets/dish-curry.svg' },
   { id: 'demo-egg', name: '虾仁滑蛋', tags: ['下饭菜'], photoUrl: 'assets/dish-egg.svg' },
