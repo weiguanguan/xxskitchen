@@ -47,3 +47,12 @@ export async function onRequestPost({ request, env }) {
 
   return json({ id, ...input });
 }
+
+export async function onRequestDelete({ request, env }) {
+  const database = getDatabase(env);
+  if (!database) return json({ error: 'D1 binding kitchendb is not configured' }, 503);
+  const id = new URL(request.url).searchParams.get('id');
+  if (!id) return json({ error: 'id is required' }, 400);
+  await database.prepare('DELETE FROM dishes WHERE id = ?').bind(id).run();
+  return json({ id, deleted: true });
+}

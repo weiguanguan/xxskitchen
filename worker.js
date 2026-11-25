@@ -1,4 +1,4 @@
-import { onRequestGet as getDishes, onRequestPost as postDishes } from './functions/api/dishes.js';
+import { onRequestGet as getDishes, onRequestPost as postDishes, onRequestDelete as deleteDish } from './functions/api/dishes.js';
 import { onRequestGet as getPhoto, onRequestPost as postPhoto } from './functions/api/photos.js';
 
 function methodNotAllowed() {
@@ -12,6 +12,7 @@ export default {
     if (url.pathname === '/api/dishes') {
       if (request.method === 'GET') return getDishes({ request, env, ctx });
       if (request.method === 'POST') return postDishes({ request, env, ctx });
+      if (request.method === 'DELETE') return deleteDish({ request, env, ctx });
       return methodNotAllowed();
     }
 

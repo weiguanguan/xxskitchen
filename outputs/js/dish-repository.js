@@ -23,6 +23,11 @@ export class DemoDishRepository {
     this.records.unshift(record);
     return { record, persistence: 'demo' };
   }
+
+  async deleteDish(id) {
+    this.records = this.records.filter((record) => record.id !== id);
+    return { persistence: 'demo' };
+  }
 }
 
 export class CloudflareDishRepository {
@@ -44,6 +49,12 @@ export class CloudflareDishRepository {
     });
     if (!response.ok) throw new Error('Cloudflare D1 菜品保存失败。');
     return { record: await response.json(), persistence: 'cloudflare' };
+  }
+
+  async deleteDish(id) {
+    const response = await fetch(`${this.apiBaseUrl}/dishes?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Cloudflare D1 菜品删除失败。');
+    return { persistence: 'cloudflare' };
   }
 }
 

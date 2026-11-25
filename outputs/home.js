@@ -8,10 +8,12 @@ const count = document.querySelector('#record-count');
 
 function renderDishes(records) {
   grid.innerHTML = records.map((dish) => `
-    <article class="dish-card" data-tags="${dish.tags.join(',')}">
-      <img src="${dish.photoUrl}" alt="${dish.name}" />
-      <div class="dish-info"><h2>${dish.name}</h2><span>${dish.tags.join(' · ')}</span></div>
-    </article>
+    <a class="dish-card-link" href="/detail.html?id=${encodeURIComponent(dish.id)}" aria-label="查看${dish.name}详情">
+      <article class="dish-card" data-tags="${dish.tags.join(',')}">
+        <img src="${dish.photoUrl}" alt="${dish.name}" />
+        <div class="dish-info"><h2>${dish.name}</h2><span>${dish.tags.join(' · ')}</span></div>
+      </article>
+    </a>
   `).join('');
   count.textContent = `${String(records.length).padStart(2, '0')} 道记录`;
   empty.hidden = records.length !== 0;
