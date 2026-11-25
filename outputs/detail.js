@@ -32,7 +32,7 @@ try {
     const notice = document.createElement('p');
     notice.className = 'data-notice';
     notice.textContent = '当前显示 Demo 菜品，Cloudflare D1 尚未连接。';
-    document.querySelector('.detail-page').prepend(notice);
+    document.querySelector('.detail-shell').prepend(notice);
   }
   const record = records.find((item) => item.id === id);
   if (!record) throw new Error('找不到这道菜品。');
