@@ -1,4 +1,4 @@
-import { createDishRepository } from './js/dish-repository.js';
+import { DemoDishRepository, createDishRepository } from './js/dish-repository.js';
 
 const repository = createDishRepository();
 const id = new URLSearchParams(window.location.search).get('id');
@@ -23,7 +23,17 @@ function render(record) {
 }
 
 try {
-  const records = await repository.listDishes();
+  let records;
+  try {
+    records = await repository.listDishes();
+  } catch (error) {
+    // 预览环境未绑定 D1 时仍可浏览详情 Demo，不把示例数据伪装成云端记录。
+    records = await new DemoDishRepository().listDishes();
+    const notice = document.createElement('p');
+    notice.className = 'data-notice';
+    notice.textContent = '当前显示 Demo 菜品，Cloudflare D1 尚未连接。';
+    document.querySelector('.detail-page').prepend(notice);
+  }
   const record = records.find((item) => item.id === id);
   if (!record) throw new Error('找不到这道菜品。');
   render(record);

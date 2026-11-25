@@ -1,0 +1,8 @@
+name = "xxskitchen-detail-demo"
+main = "worker.js"
+compatibility_date = "2026-11-24"
+
+[assets]
+directory = "./outputs"
+binding = "ASSETS"
+run_worker_first = ["/api/*"]
