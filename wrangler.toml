@@ -6,3 +6,12 @@ compatibility_date = "2026-11-24"
 directory = "./outputs"
 binding = "ASSETS"
 run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "kitchendb"
+database_name = "xxskitchen"
+database_id = "8ac9678a-df1e-461c-a789-5e5438c39560"
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "xxkitchen--photos"
